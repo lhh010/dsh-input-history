@@ -2,6 +2,10 @@
 
 DSH Web 输入历史插件：像终端一样用 **Ctrl+Up / Ctrl+Down** 召回和切换已发送的消息，零核心改动。
 
+## 版本兼容 / Version compatibility
+
+兼容 DSH snapshot0808（`snapshots/20260808T121140Z-7f25d3e98c`）：浏览器端实现只使用会话快照与官方输入门面（`conversation.input.for(actx).setDraft()`），不依赖任何被 0808 迁移的槽位契约，typecheck 与实机加载均已验证。
+
 ## 功能
 
 - **Ctrl+Up**：把最近一条已发送的用户消息填入输入框；连续按向上遍历更早的消息
