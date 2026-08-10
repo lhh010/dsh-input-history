@@ -4,7 +4,13 @@ DSH Web 输入历史插件：像终端一样用 **Ctrl+Up / Ctrl+Down** 召回�
 
 ## 版本兼容 / Version compatibility
 
-兼容 DSH snapshot0808（`snapshots/20260808T121140Z-7f25d3e98c`）：浏览器端实现只使用会话快照与官方输入门面（`conversation.input.for(actx).setDraft()`），不依赖任何被 0808 迁移的槽位契约，typecheck 与实机加载均已验证。
+兼容 DSH snapshot0808（`snapshots/20260808T121140Z-7f25d3e98c`）与 snapshot0809（`snapshots/20260809T140917Z-a6bb5a95ba`）：浏览器端实现只使用会话快照与官方输入门面（`conversation.input.for(actx).setDraft()`），不依赖任何被 0808/0809 迁移的槽位契约，typecheck 与实机加载均已验证——0809 运行中的 `window.__DSH_BOOT__` 清单包含本插件，Ctrl+Up / Ctrl+Down 召回实测可用。
+
+### 0809 兼容要点（实机验证）
+
+- **加载机制变化**：0809 重构了客户端插件机制——旧的 `dsh.plugin.json` 清单 + `resolveClientPath`（`packages/plugin/plugin`）已删除，改为 **package.json 的 `dshClient` 声明**（`platform: 'web'`，可选 `inject`/`immediately`）+ `exports["./client"]` 指向构建产物；宿主扫描 loader 条目组成 boot 图，Web 端从 `/plugins/<id>/client.js` 拉取。本插件 package.json 已满足该声明，无需改动。
+- 依赖的官方输入门面 `conversation.input.for(actx).setDraft()` 与 `ConversationSnapshot.nodes` 会话快照在 0809 上保留，契约未变；键盘 capture 拦截不依赖任何槽位。
+- **构建要求**：0809 宿主在激活时校验 `dshClient` 包的构建产物，缺失会抛 `ClientPackageCompositionError` 并**拒绝启动 `dsh web`**——升级快照或改源码后必须重新 `pnpm run build` 再启动，否则浏览器拉到的是旧 `lib/client.js`。
 
 ## 功能
 
