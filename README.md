@@ -6,6 +6,8 @@ DSH Web 输入历史插件：像终端一样用 **Ctrl+Up / Ctrl+Down** 召回�
 
 兼容 DSH snapshot0808（`snapshots/20260808T121140Z`）、snapshot0809（`snapshots/20260809T140917Z`）与 snapshot0810（`snapshots/20260810T155924Z`）：浏览器端实现只使用会话快照与官方输入门面（`conversation.input.for(actx).setDraft()`），不依赖任何被 0808/0809 迁移的槽位契约，typecheck 与实机加载均已验证——0809 运行中的 `window.__DSH_BOOT__` 清单包含本插件，Ctrl+Up / Ctrl+Down 召回实测可用；0810 迁移后 `dsh.client` 声明实测同样进 boot 图。
 
+**npm 发版兼容**：兼容 DSH npm 基线 `0.0.1-20260810T155924Z`（snapshot0810 的 npm 发版）。实测：npm 基线安装后运行时加载、对基线构建产物 typecheck 与 `window.__DSH_BOOT__` 清单（0810 基线实机）均通过。注意：`peerDependencies.cordis` 为 `^4.0.0-rc.7`，与基线 vendored `cordis@0.0.1-20260810T155924Z` 不匹配——纯 `npm install` 需加 `--legacy-peer-deps`；经 `dsh plugin`/pnpm 安装自动处理（为插件嵌套公网 cordis），运行不受影响。
+
 ### 0809 兼容要点（实机验证）
 
 - **加载机制变化**：0809 重构了客户端插件机制——旧的 `dsh.plugin.json` 清单 + `resolveClientPath`（`packages/plugin/plugin`）已删除，改为 **package.json 的 `dshClient` 声明**（`platform: 'web'`，可选 `inject`/`immediately`）+ `exports["./client"]` 指向构建产物；宿主扫描 loader 条目组成 boot 图，Web 端从 `/plugins/<id>/client.js` 拉取。本插件 package.json 已满足该声明，无需改动。
