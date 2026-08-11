@@ -6,7 +6,7 @@ DSH Web 输入历史插件：像终端一样用 **Ctrl+Up / Ctrl+Down** 召回�
 
 兼容 DSH snapshot0808（`snapshots/20260808T121140Z`）、snapshot0809（`snapshots/20260809T140917Z`）与 snapshot0810（`snapshots/20260810T155924Z`）：浏览器端实现只使用会话快照与官方输入门面（`conversation.input.for(actx).setDraft()`），不依赖任何被 0808/0809 迁移的槽位契约，typecheck 与实机加载均已验证——0809 运行中的 `window.__DSH_BOOT__` 清单包含本插件，Ctrl+Up / Ctrl+Down 召回实测可用；0810 迁移后 `dsh.client` 声明实测同样进 boot 图。
 
-**npm 发版兼容**：兼容 DSH npm 基线 `0.0.1-20260810T155924Z`（snapshot0810 的 npm 发版）。实测：npm 基线安装后运行时加载、对基线构建产物 typecheck 与 `window.__DSH_BOOT__` 清单（0810 基线实机）均通过。注意：`peerDependencies.cordis` 为 `^4.0.0-rc.7`，与基线 vendored `cordis@0.0.1-20260810T155924Z` 不匹配——纯 `npm install` 需加 `--legacy-peer-deps`；经 `dsh plugin`/pnpm 安装自动处理（为插件嵌套公网 cordis），运行不受影响。
+**npm 发版兼容**：兼容 DSH npm 发版 `@deepseek-ai/dsh@0.0.1-rc.1`（即 snapshot0810 的 npm 发版；`npx -p @deepseek-ai/dsh@0.0.1-rc.1 dsh web` 可访问指定版本并启动，lib 生产模式）。实测（同源本地基线）：npm 基线安装后运行时加载、对基线构建产物 typecheck 与 `window.__DSH_BOOT__` 清单均通过。注意：`peerDependencies.cordis` 声明为 `^4.0.0-rc.7`，而 npm 发版将 vendored `cordis` 一并按 `0.0.1-rc.?` 统一预发布版本号发布——纯 `npm install` 报 peer 冲突（ERESOLVE）时加 `--legacy-peer-deps` 即可；经 `dsh plugin`/pnpm 安装自动处理，运行不受影响。
 
 ### 0809 兼容要点（实机验证）
 
