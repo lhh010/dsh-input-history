@@ -4,7 +4,7 @@
  * The host half exists so the manifest has a node entry and a home for the
  * invariant companion; keep it a registration shell.
  */
-import type { Context } from 'cordis'
+import type { Context } from '@deepseek-ai/cordis'
 
 /** Stable Cordis plugin name (matches the manifest id). */
 export const name = '@dsh-external/dsh-input-history'
