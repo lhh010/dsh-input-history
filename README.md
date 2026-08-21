@@ -23,6 +23,10 @@ DSH Web 输入历史插件：像终端一样用 **Ctrl+Up / Ctrl+Down** 召回�
 - **cordis 更名（本快照唯一影响本插件的官方变化）**：0811 将 vendored cordis 由 `cordis@4.0.0-rc.7` 更名为 **`@deepseek-ai/cordis@4.0.1-rc.1`**（官方 client 包随之全部改从 `@deepseek-ai/cordis` 导入）。本插件对 cordis 只有 type-only 导入（`src/index.ts`、`src/invariant.ts` 的 `import type { Context } from 'cordis'`），**构建产物（lib/*.js）零 cordis 运行时导入**——更名不影响已构建 bundle 的运行时加载；但源码对 npm rc.2 基线 typecheck 时 `cordis` 裸导入报 TS2307（仅此一处），**将类型导入迁移为 `from '@deepseek-ai/cordis'` 后全绿**。建议同步把 `peerDependencies.cordis` 迁移为 `@deepseek-ai/cordis: ^4.0.1-rc.1`。
 - **实机 boot 验证**：snapshot0811（`snapshots/20260811T152241Z`）web 启动后 `window.__DSH_BOOT__` 清单包含 `@dsh-external/dsh-input-history`（inject: `dsh-client-runtime`/`dsh-client-ui-conversation`），`/plugins/@dsh-external/dsh-input-history/client.js` 返回 200；typecheck（含 tests）对 0811 基线通过。依赖的输入门面 `conversation.input.for(actx).setDraft()` 与 `ConversationSnapshot.nodes` 契约在 0811 上保持不变（0811 会话快照仅新增 `views` 字段，不影响 nodes 读取）。
 
+### 0.1.1-rc.1 兼容要点（npm 发版 `@deepseek-ai/dsh@0.1.1-rc.1`，v0.1.2）
+
+- **实机 boot 验证**：`dsh --profile web`（npm `0.1.1-rc.1`）启动后 `window.__DSH_BOOT__` 清单包含 `@dsh-external/dsh-input-history`（inject: `dsh-client-runtime`/`dsh-client-ui-conversation`），`/plugins/@dsh-external/dsh-input-history/client.js` 返回 200；依赖的输入门面 `conversation.input.for(actx).setDraft()` 与 `ConversationSnapshot.nodes` 契约在 0.1.1-rc.1 上保持不变，Ctrl+Up / Ctrl+Down 行为无回归
+
 ### 0812/最终快照 兼容要点（snapshots/20260812T172954Z-final，实机验证）
 
 - **cordis 更名落地**：本插件已把 type-only 导入（`src/index.ts`、`src/invariant.ts` 的 `import type { Context } from '@deepseek-ai/cordis'`）与 `peerDependencies` 迁移至 `@deepseek-ai/cordis`（`^4.0.1-rc.1`；npm rc.5 基线上为 `@deepseek-ai/cordis@4.0.1-rc.4`）——构建产物（lib/*.js）依旧零 cordis 运行时导入，npm rc.5 消费者 typecheck 全绿，`npm install` 无需 `--legacy-peer-deps`。
