@@ -25,6 +25,7 @@ import type {
 // views.get('chat') resolves to ChatSnapshot.
 import type {} from '@deepseek-ai/dsh-client-ui-chat/client'
 import { down, extractHistory, IDLE, resync, up, type HistoryBrowse } from './history.ts'
+import { applyWithCompat } from './compat.ts'
 
 /** Stable Cordis plugin name (matches the manifest id). */
 export const name = 'dsh-input-history'
@@ -65,7 +66,7 @@ const EMPTY_NODES: readonly ConversationNode[] = []
  * re-sync covers both, plus sends clearing the draft).
  * @param ctx - client root context.
  */
-export function apply(ctx: ClientContext): void {
+function applyBody(ctx: ClientContext): void {
   let browse: HistoryBrowse = IDLE
   let lastSessionId: string | undefined
 
@@ -137,4 +138,29 @@ export function apply(ctx: ClientContext): void {
       window.removeEventListener('input', onInput, true)
     }
   }, 'dsh-input-history: composer keyboard capture')
+}
+
+/**
+ * Client plugin entry: run {@link applyBody} behind a graceful-compatibility
+ * guard — when the running DSH lacks the client APIs this plugin needs, a
+ * remediation banner renders instead of a thrown activation error.
+ * @param ctx - client root context.
+ */
+export function apply(ctx: ClientContext): void {
+  applyWithCompat(
+    '@dsh-external/dsh-input-history',
+    '当前 DSH 客户端 API 与插件不匹配',
+    [
+      '将 DSH 升级到已适配的版本（dsh-v0.1.2-alpha.1，源码构建安装）。',
+      '或将插件更新到适配当前 DSH 的版本（仓库最新 tag）。',
+      '如仍显示，请在插件目录执行 pnpm run build 后刷新页面。',
+    ],
+    [
+      ['sessions.list', ctx?.sessions?.list],
+      ['sessions.scope', ctx?.sessions?.scope],
+      ['sessions.sessionOf', ctx?.sessions?.sessionOf],
+      ['uiConversation.binding', ctx?.uiConversation?.binding],
+    ],
+    () => { applyBody(ctx) },
+  )
 }

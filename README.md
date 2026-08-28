@@ -40,6 +40,7 @@ DSH Web 输入历史插件：像终端一样用 **Ctrl+Up / Ctrl+Down** 召回�
 - **输入门面保留**：`conversation.input.for(actx).setDraft()` 与 `input.state.getSnapshot().draft` 契约在 ui-conversation 的 Lexical 输入外壳（SessionInputShell）上保留；`setDraft` 自身把光标置于末尾，插件不再手动搬运 caret。
 - **编辑器 DOM 变化**：composer 由 textarea 改为 contenteditable div（`data-composer-input`，仍位于 `data-input-scroll` 内）。目标判定放宽为"位于 `data-input-scroll` 内的元素"；草稿读取一律取输入机 published 的 clipboard 投影（contenteditable 的 DOM 文本无法还原 reference chip）。
 - **注册范式**：插件导出 `inject = ['sessions', 'uiConversation', 'conversation']`，apply 内直接读 `ctx.sessions` / `ctx.uiConversation`，不再使用 `ctx.inject([...], scope => ...)` 包装；`dsh.client.inject` 同步为 api-session-controller / ui-chat / ui-conversation 三个包名边。
+本插件 v0.1.4 起内置**兼容性自诊断**：apply 时探测所需服务面(sessions/uiConversation),不满足时不再崩溃,而是在页面右下角渲染修复指引横幅(点击可关闭)。
 
 ## 功能
 
