@@ -19,7 +19,7 @@ const PLATFORM_MODULES = [
 ] as const
 
 /** Externals resolved from the loader module table (type-only imports never reach the bundle). */
-const CLIENT_EXTERNALS: readonly string[] = [...PLATFORM_MODULES, '@deepseek-ai/dsh-client-runtime/client']
+const CLIENT_EXTERNALS: readonly string[] = [...PLATFORM_MODULES]
 
 /** Bundle purity gate: platform seeds stay external, everything else inline. */
 function isExternal(source: string): boolean {

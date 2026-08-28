@@ -5,7 +5,7 @@
  * draft changes.
  */
 import { describe, expect, it } from 'vitest'
-import type { ConversationNode } from '@deepseek-ai/dsh-client-runtime/client'
+import type { ConversationNode } from '@deepseek-ai/dsh-client-ui-conversation/client'
 import { down, extractHistory, IDLE, resync, textOf, up } from '../src/client/history.ts'
 
 /** One user node with the given text blocks. */

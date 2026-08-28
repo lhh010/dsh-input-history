@@ -3,7 +3,7 @@
  * the Ctrl+Up/Ctrl+Down browse state machine. No DOM, no cordis — the whole
  * module is unit-testable without a runtime.
  */
-import type { ConversationNode } from '@deepseek-ai/dsh-client-runtime/client'
+import type { ConversationNode } from '@deepseek-ai/dsh-client-ui-conversation/client'
 
 /**
  * The browse state for one session.
