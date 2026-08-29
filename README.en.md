@@ -49,17 +49,38 @@ Compatible with DSH snapshot0808 (`snapshots/20260808T121140Z`), snapshot0809 (`
 - History comes from the user messages in the current session snapshot (adjacent duplicates automatically removed, blanks skipped) and remains available after refreshing the page
 - The browse state automatically resets once the input box is manually edited, pasted into, or its draft is cleared by sending
 
-## Installation
+## Installation (profile mode)
 
-Register the plugin in DSH's `cordis.yml` (or install it with marisa / plugin-registry):
+```sh
+# Option 1: pinned-tag git dependency (public mirror, recommended; github:omdsh-dev/dsh-input-history also works)
+dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.4'
 
-```yaml
-plugins:
-  '@dsh-external/dsh-input-history':
-    path: /path/to/dsh-input-history
+# Option 2: local link (development)
+git clone https://github.com/lhh010/dsh-input-history.git
+cd dsh-input-history && pnpm install && pnpm run build
+dsh plugin --profile web add link:/path/to/dsh-input-history
 ```
 
-After restarting `dsh web`, the browser-side plugin loads with the page (`/plugins/<id>/client.js`).
+Config line (`$DSH_HOME/profiles/web/cordis.patch.yml`, hot-reloaded, no restart needed):
+
+```yaml
+- insert:
+    - id: dsh-input-history
+      name: '@dsh-external/dsh-input-history'
+```
+
+> **Install tips**: pnpm 11 may block node-pty build scripts on first install — run `pnpm approve-builds --all` under `~/.dsh/profiles/web` and re-run the install; then **hard-refresh the browser** (Ctrl/Cmd+Shift+R).
+
+### Prompt install (let DSH install it)
+
+Paste this prompt into any DSH session and the agent installs it for you:
+
+> Install the dsh-input-history plugin (DSH input-history recall plugin (terminal-style Ctrl+Up/Ctrl+Down)):
+> 1. Run `dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.4'` (the first run may fail because pnpm 11 blocks node-pty build scripts)
+> 2. Under `~/.dsh/profiles/web`, run `pnpm approve-builds --all` (approve the build scripts)
+> 3. Re-run the install command from step 1
+> 4. Remind me to hard-refresh the browser (Ctrl/Cmd+Shift+R)
+> On errors, first check the FAQ/known limitations in the README at https://github.com/lhh010/dsh-input-history.
 
 ## Build
 

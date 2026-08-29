@@ -50,17 +50,38 @@ DSH Web 输入历史插件：像终端一样用 **Ctrl+Up / Ctrl+Down** 召回�
 - 历史来自当前会话快照的用户消息（自动去相邻重复、跳过空白），刷新页面后仍然可用
 - 输入框被手动编辑、粘贴、或发送清空草稿后，浏览状态自动复位
 
-## 安装
+## 安装（profile 模式）
 
-在 DSH 的 `cordis.yml` 中注册插件（或使用 marisa / plugin-registry 安装）：
+```sh
+# 方式一：git 依赖固定 tag（公开镜像，推荐；也可用 github:omdsh-dev/dsh-input-history）
+dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.4'
 
-```yaml
-plugins:
-  '@dsh-external/dsh-input-history':
-    path: /path/to/dsh-input-history
+# 方式二：本地 link（开发）
+git clone https://github.com/lhh010/dsh-input-history.git
+cd dsh-input-history && pnpm install && pnpm run build
+dsh plugin --profile web add link:/path/to/dsh-input-history
 ```
 
-重启 `dsh web` 后，浏览器端插件会随页面加载（`/plugins/<id>/client.js`）。
+配置行（`$DSH_HOME/profiles/web/cordis.patch.yml`，热重载，无需重启）：
+
+```yaml
+- insert:
+    - id: dsh-input-history
+      name: '@dsh-external/dsh-input-history'
+```
+
+> **安装提示**：pnpm 11 首次安装可能拦截 node-pty 等构建脚本——在 `~/.dsh/profiles/web` 下执行 `pnpm approve-builds --all` 放行后重跑安装命令即可；装完**硬刷新浏览器**（Ctrl/Cmd+Shift+R）。
+
+### 提示词安装（让 DSH 自己装）
+
+把下面这段提示词发给任意一个 DSH 会话，模型会替你完成安装：
+
+> 帮我安装 dsh-input-history 插件（DSH 输入历史召回插件（Ctrl+Up/Ctrl+Down 终端式输入历史）），步骤：
+> 1. 执行 `dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.4'`（首次可能被 pnpm 11 拦截 node-pty 构建脚本而失败）
+> 2. 在 `~/.dsh/profiles/web` 下执行 `pnpm approve-builds --all`（放行构建脚本）
+> 3. 再执行一次第 1 步的安装命令
+> 4. 完成后提醒我硬刷新浏览器（Ctrl/Cmd+Shift+R）
+> 遇到报错先查 https://github.com/lhh010/dsh-input-history README 的常见问题/已知限制。
 
 ## 构建
 
