@@ -4,7 +4,7 @@ DSH Web 输入历史插件：像终端一样用 **Ctrl+Up / Ctrl+Down** 召回�
 
 ## 版本兼容 / Version compatibility
 
-当前版本（v0.1.3）兼容 **dsh-v0.1.2-alpha.1**（服务面与 Conversation 视图迁移，见下文对应小节）。历史基线：兼容 DSH snapshot0808（`snapshots/20260808T121140Z`）、snapshot0809（`snapshots/20260809T140917Z`）、snapshot0810（`snapshots/20260810T155924Z`）、snapshot0811（`snapshots/20260811T152241Z`）与最终快照 snapshot0812（`snapshots/20260812T172954Z-final`）：浏览器端实现只使用会话快照与官方输入门面（`conversation.input.for(actx).setDraft()`），不依赖任何被 0808/0809 迁移的槽位契约，typecheck 与实机加载均已验证——0809 运行中的 `window.__DSH_BOOT__` 清单包含本插件，Ctrl+Up / Ctrl+Down 召回实测可用；0810 迁移后 `dsh.client` 声明实测同样进 boot 图；0811 与 0812 最终快照实机 boot 验证通过（见下）。
+当前版本（v0.1.4）兼容 **dsh-v0.1.2-alpha.1**（服务面与 Conversation 视图迁移，见下文对应小节）。历史基线：兼容 DSH snapshot0808（`snapshots/20260808T121140Z`）、snapshot0809（`snapshots/20260809T140917Z`）、snapshot0810（`snapshots/20260810T155924Z`）、snapshot0811（`snapshots/20260811T152241Z`）与最终快照 snapshot0812（`snapshots/20260812T172954Z-final`）：浏览器端实现只使用会话快照与官方输入门面（`conversation.input.for(actx).setDraft()`），不依赖任何被 0808/0809 迁移的槽位契约，typecheck 与实机加载均已验证——0809 运行中的 `window.__DSH_BOOT__` 清单包含本插件，Ctrl+Up / Ctrl+Down 召回实测可用；0810 迁移后 `dsh.client` 声明实测同样进 boot 图；0811 与 0812 最终快照实机 boot 验证通过（见下）。
 
 **npm 发版兼容**：兼容 DSH npm 发版 `@deepseek-ai/dsh@0.0.1-rc.5`（dist-tag `next`，即最终快照 snapshot0812 的 npm 发版；`npm exec -p @deepseek-ai/dsh@0.0.1-rc.5 -- dsh --profile web --port <port>` 可访问指定版本并启动，lib 生产模式），同时保持兼容 `@deepseek-ai/dsh@0.0.1-rc.2`（snapshot0811 的 npm 发版）。实测（npm rc.5 基线）：`dsh web` 启动后 `window.__DSH_BOOT__` 清单包含本插件（inject: `dsh-client-runtime`/`dsh-client-ui-conversation`），`/plugins/@dsh-external/dsh-input-history/client.js` 返回 200；src 对 rc.5 基线构建产物 typecheck 全绿（本插件已把 cordis 类型导入与 peer 迁移至 `@deepseek-ai/cordis`，见下）。注意：0811 起 vendored cordis 更名为 `@deepseek-ai/cordis`（npm 发版不再发布 `cordis` 名义的 vendored 包），本插件已迁移（peer 声明 `@deepseek-ai/cordis: ^4.0.1-rc.1`，npm rc.5 基线上为 `4.0.1-rc.4`），纯 `npm install` 不再报 ERESOLVE。
 
@@ -33,7 +33,7 @@ DSH Web 输入历史插件：像终端一样用 **Ctrl+Up / Ctrl+Down** 召回�
 - **invariants 源码包迁移（仅影响本地 typecheck）**：最终快照将 `@deepseek-ai/dsh-invariants` 源码包由 `packages/support/invariants` 移至 `packages/runtime-diagnostics/invariants`，devDependencies 路径已同步更新；服务名 `invariants` 与注册协议未变，运行不受影响。
 - **实机 boot 验证**：最终快照（`snapshots/20260812T172954Z-final`）web 启动后 `window.__DSH_BOOT__` 清单包含 `@dsh-external/dsh-input-history`，`/plugins/@dsh-external/dsh-input-history/client.js` 返回 200；npm rc.5 consumer `dsh web` 启动后 boot 清单同样包含本插件。依赖的输入门面 `conversation.input.for(actx).setDraft()` 与 `ConversationSnapshot.nodes` 契约在最终快照与 rc.5 上保持不变（0811 新增的 `views` 与 `InputState.imageIds` 均不影响本插件读取的 nodes/draft 契约）。typecheck、build 与 18 个单测对最终快照基线通过。
 
-### dsh-v0.1.2-alpha.1 兼容要点（v0.1.3）
+### dsh-v0.1.2-alpha.1 兼容要点（v0.1.4）
 
 - **服务面迁移**：旧 `@deepseek-ai/dsh-client-runtime/client` 包已删除。本插件类型迁移到 `@deepseek-ai/cordis`（Context）、`@deepseek-ai/dsh-api-session-controller/client`（ISessions）与 `@deepseek-ai/dsh-client-ui-conversation/client`（IConversation/SessionInput/ConversationNode），并通过 `@deepseek-ai/dsh-client-ui-chat/client` 的声明合并读取 chat 视图快照类型。
 - **历史来源迁移**：会话快照不再携带 nodes。历史提取改走 Conversation 装配服务：`ctx.uiConversation.binding(sessionId).snapshot.getSnapshot().views.get('chat')?.legacy.nodes`（chat 视图的 legacy 兼容投影，user 节点结构不变，`kind === 'user'` 过滤与文本块拼接逻辑无需改动）。
