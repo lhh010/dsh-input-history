@@ -2,11 +2,41 @@
 
 DSH Web 输入历史插件：像终端一样用 **Ctrl+Up / Ctrl+Down** 召回和切换已发送的消息，零核心改动。
 
-## 版本兼容 / Version compatibility
+## 安装（profile 模式）
 
-当前版本（v0.1.4）兼容 **dsh-v0.1.2-alpha.1**（服务面与 Conversation 视图迁移，见下文对应小节）。历史基线：兼容 DSH snapshot0808（`snapshots/20260808T121140Z`）、snapshot0809（`snapshots/20260809T140917Z`）、snapshot0810（`snapshots/20260810T155924Z`）、snapshot0811（`snapshots/20260811T152241Z`）与最终快照 snapshot0812（`snapshots/20260812T172954Z-final`）：浏览器端实现只使用会话快照与官方输入门面（`conversation.input.for(actx).setDraft()`），不依赖任何被 0808/0809 迁移的槽位契约，typecheck 与实机加载均已验证——0809 运行中的 `window.__DSH_BOOT__` 清单包含本插件，Ctrl+Up / Ctrl+Down 召回实测可用；0810 迁移后 `dsh.client` 声明实测同样进 boot 图；0811 与 0812 最终快照实机 boot 验证通过（见下）。
+```sh
+# 方式一：git 依赖固定 tag（公开镜像，推荐；也可用 github:lhh010/dsh-input-history）
+dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.4'
 
-**npm 发版兼容**：兼容 DSH npm 发版 `@deepseek-ai/dsh@0.0.1-rc.5`（dist-tag `next`，即最终快照 snapshot0812 的 npm 发版；`npm exec -p @deepseek-ai/dsh@0.0.1-rc.5 -- dsh --profile web --port <port>` 可访问指定版本并启动，lib 生产模式），同时保持兼容 `@deepseek-ai/dsh@0.0.1-rc.2`（snapshot0811 的 npm 发版）。实测（npm rc.5 基线）：`dsh web` 启动后 `window.__DSH_BOOT__` 清单包含本插件（inject: `dsh-client-runtime`/`dsh-client-ui-conversation`），`/plugins/@dsh-external/dsh-input-history/client.js` 返回 200；src 对 rc.5 基线构建产物 typecheck 全绿（本插件已把 cordis 类型导入与 peer 迁移至 `@deepseek-ai/cordis`，见下）。注意：0811 起 vendored cordis 更名为 `@deepseek-ai/cordis`（npm 发版不再发布 `cordis` 名义的 vendored 包），本插件已迁移（peer 声明 `@deepseek-ai/cordis: ^4.0.1-rc.1`，npm rc.5 基线上为 `4.0.1-rc.4`），纯 `npm install` 不再报 ERESOLVE。
+# 方式二：本地 link（开发）
+git clone https://github.com/lhh010/dsh-input-history.git
+cd dsh-input-history && pnpm install && pnpm run build
+dsh plugin --profile web add link:/path/to/dsh-input-history
+```
+
+配置行（`$DSH_HOME/profiles/web/cordis.patch.yml`，热重载，无需重启）：
+
+```yaml
+- insert:
+    - id: dsh-input-history
+      name: '@dsh-external/dsh-input-history'
+```
+
+> **安装提示**：pnpm 11 首次安装可能拦截 node-pty 等构建脚本——在 `~/.dsh/profiles/web` 下执行 `pnpm approve-builds --all` 放行后重跑安装命令即可；装完**硬刷新浏览器**（Ctrl/Cmd+Shift+R）。
+
+### 提示词安装（让 DSH 自己装）
+
+把下面这段提示词发给任意一个 DSH 会话，模型会替你完成安装：
+
+> 帮我安装 dsh-input-history 插件（DSH 输入历史召回插件（Ctrl+Up/Ctrl+Down 终端式输入历史）），步骤：
+> 1. 执行 `dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.4'`（首次可能被 pnpm 11 拦截 node-pty 构建脚本而失败）
+> 2. 在 `~/.dsh/profiles/web` 下执行 `pnpm approve-builds --all`（放行构建脚本）
+> 3. 再执行一次第 1 步的安装命令
+> 4. 完成后提醒我硬刷新浏览器（Ctrl/Cmd+Shift+R）
+> 遇到报错先查 https://github.com/lhh010/dsh-input-history README 的常见问题/已知限制。
+
+
+（npm 发版不再发布 `cordis` 名义的 vendored 包），本插件已迁移（peer 声明 `@deepseek-ai/cordis: ^4.0.1-rc.1`，npm rc.5 基线上为 `4.0.1-rc.4`），纯 `npm install` 不再报 ERESOLVE。
 
 ### 0809 兼容要点（实机验证）
 

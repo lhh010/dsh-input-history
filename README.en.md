@@ -4,11 +4,41 @@
 
 DSH Web input history plugin: recall and cycle through already-sent messages with **Ctrl+Up / Ctrl+Down**, just like a terminal — with zero core changes.
 
-## Version compatibility
+## Installation (profile mode)
 
-Compatible with DSH snapshot0808 (`snapshots/20260808T121140Z`), snapshot0809 (`snapshots/20260809T140917Z`), snapshot0810 (`snapshots/20260810T155924Z`), snapshot0811 (`snapshots/20260811T152241Z`), and the final snapshot snapshot0812 (`snapshots/20260812T172954Z-final`): the browser-side implementation uses only the session snapshot and the official input façade (`conversation.input.for(actx).setDraft()`), and depends on none of the slot contracts migrated by 0808/0809 — typecheck and real-machine loading have both been verified: the `window.__DSH_BOOT__` manifest on a running 0809 includes this plugin, and Ctrl+Up / Ctrl+Down recall has been tested and works; after the 0810 migration, the `dsh.client` declaration was likewise verified to make it into the boot graph; the 0811 and 0812 final snapshots passed real-machine boot verification (see below).
+```sh
+# Option 1: pinned-tag git dependency (public mirror, recommended; github:lhh010/dsh-input-history also works)
+dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.4'
 
-**alpha release compatibility**: compatible with `dsh-v0.1.2-alpha.1` (GitHub tag `dsh-v0.1.2-alpha.1`, source-built install, not published to npm; v0.1.4 migrated & verified: 0.1.2-alpha.1 removed the `@deepseek-ai/dsh-client-runtime` client package — `ClientContext` now imports from `@deepseek-ai/cordis`, and the conversation `nodes` moved to the `ChatSnapshot.legacy` compatibility projection. This plugin now reads history from `ctx.uiConversation.binding(id).snapshot.getSnapshot().views.get('chat')?.legacy.nodes` and writes the composer draft through the current `conversation.input.for(actx).setDraft()`; the composer target was relaxed to the contenteditable `data-input-scroll` frame. typecheck, all 18 unit tests, and the build are green).
+# Option 2: local link (development)
+git clone https://github.com/lhh010/dsh-input-history.git
+cd dsh-input-history && pnpm install && pnpm run build
+dsh plugin --profile web add link:/path/to/dsh-input-history
+```
+
+Config line (`$DSH_HOME/profiles/web/cordis.patch.yml`, hot-reloaded, no restart needed):
+
+```yaml
+- insert:
+    - id: dsh-input-history
+      name: '@dsh-external/dsh-input-history'
+```
+
+> **Install tips**: pnpm 11 may block node-pty build scripts on first install — run `pnpm approve-builds --all` under `~/.dsh/profiles/web` and re-run the install; then **hard-refresh the browser** (Ctrl/Cmd+Shift+R).
+
+### Prompt install (let DSH install it)
+
+Paste this prompt into any DSH session and the agent installs it for you:
+
+> Install the dsh-input-history plugin (DSH input-history recall plugin (terminal-style Ctrl+Up/Ctrl+Down)):
+> 1. Run `dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.4'` (the first run may fail because pnpm 11 blocks node-pty build scripts)
+> 2. Under `~/.dsh/profiles/web`, run `pnpm approve-builds --all` (approve the build scripts)
+> 3. Re-run the install command from step 1
+> 4. Remind me to hard-refresh the browser (Ctrl/Cmd+Shift+R)
+> On errors, first check the FAQ/known limitations in the README at https://github.com/lhh010/dsh-input-history.
+
+
+, all 18 unit tests, and the build are green).
 
 **npm release compatibility**: compatible with the DSH npm release `@deepseek-ai/dsh@0.0.1-rc.5` (dist-tag `next`, i.e. the npm release of the final snapshot snapshot0812; `npm exec -p @deepseek-ai/dsh@0.0.1-rc.5 -- dsh --profile web --port <port>` lets you reach and start the specified version, lib production mode), while remaining compatible with `@deepseek-ai/dsh@0.0.1-rc.2` (the npm release of snapshot0811). Verified (npm rc.5 baseline): after `dsh web` starts, the `window.__DSH_BOOT__` manifest includes this plugin (inject: `dsh-client-runtime`/`dsh-client-ui-conversation`), and `/plugins/@dsh-external/dsh-input-history/client.js` returns 200; src typechecks clean against the rc.5 baseline build artifacts (this plugin has migrated its cordis type imports and peer to `@deepseek-ai/cordis`, see below). Note: starting with 0811, the vendored cordis was renamed to `@deepseek-ai/cordis` (the npm releases no longer publish a vendored package under the name `cordis`), and this plugin has migrated (peer declares `@deepseek-ai/cordis: ^4.0.1-rc.1`, which is `4.0.1-rc.4` on the npm rc.5 baseline), so a plain `npm install` no longer reports ERESOLVE.
 
