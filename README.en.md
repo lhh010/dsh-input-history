@@ -6,12 +6,12 @@ DSH Web input history plugin: recall and cycle through already-sent messages wit
 
 > **Pick the plugin version that matches your DSH** (a mismatch crashes: common symptom `useConversation is not a function`)
 > - DSH **0.1.1-rc.2** (npm latest): install the **old** version `'@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.2'`
-> - DSH **0.1.2-alpha.1 / alpha.2 / alpha.3 / alpha.4 / alpha.5**: install the **new** version (the default command below)
+> - DSH **0.1.2-alpha.1 / alpha.2 / alpha.3 / alpha.4 / alpha.5 / rc.1**: install the **new** version (the default command below)
 ## Installation (profile mode)
 
 ```sh
 # Option 1: pinned-tag git dependency (public mirror, recommended; github:lhh010/dsh-input-history also works)
-dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.7'
+dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.8'
 
 # Option 2: local link (development)
 git clone https://github.com/lhh010/dsh-input-history.git
@@ -34,7 +34,7 @@ Config line (`$DSH_HOME/profiles/web/cordis.patch.yml`, hot-reloaded, no restart
 Paste this prompt into any DSH session and the agent installs it for you:
 
 > Install the dsh-input-history plugin (DSH input-history recall plugin (terminal-style Ctrl+Up/Ctrl+Down)):
-> 1. Run `dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.7'` (the first run may fail because pnpm 11 blocks node-pty build scripts)
+> 1. Run `dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.8'` (the first run may fail because pnpm 11 blocks node-pty build scripts)
 > 2. Under `~/.dsh/profiles/web`, run `pnpm approve-builds --all` (approve the build scripts)
 > 3. Re-run the install command from step 1
 > 4. Remind me to hard-refresh the browser (Ctrl/Cmd+Shift+R)
@@ -66,6 +66,10 @@ Paste this prompt into any DSH session and the agent installs it for you:
 - **invariants source package move (only affects local typecheck)**: the final snapshot moved the `@deepseek-ai/dsh-invariants` source package from `packages/support/invariants` to `packages/runtime-diagnostics/invariants`, and the devDependencies paths have been updated accordingly; the service name `invariants` and the registration protocol are unchanged, so runtime is unaffected.
 - **Real-machine boot verification**: after starting web on the final snapshot (`snapshots/20260812T172954Z-final`), the `window.__DSH_BOOT__` manifest contains `@dsh-external/dsh-input-history`, and `/plugins/@dsh-external/dsh-input-history/client.js` returns 200; the boot manifest likewise contains this plugin after an npm rc.5 consumer starts `dsh web`. The relied-upon input façade `conversation.input.for(actx).setDraft()` and `ConversationSnapshot.nodes` contracts remain unchanged on the final snapshot and rc.5 (neither the `views` field added in 0811 nor `InputState.imageIds` affects the nodes/draft contracts this plugin reads). Typecheck, build, and 18 unit tests pass against the final snapshot baseline.
 
+### dsh-v0.1.2-rc.1 compatibility notes (v0.1.8)
+
+- **Verification**: alpha.5 → rc.1 is version-bump-only upstream (252 files, zero code diff); verified live on rc.1, no code changes needed. The alpha.1–alpha.5 range above remains compatible
+
 ### dsh-v0.1.2-alpha.1 compatibility notes (v0.1.4)
 
 - **Service-face migration**: the old `@deepseek-ai/dsh-client-runtime/client` package was removed. This plugin's types moved to `@deepseek-ai/cordis` (Context), `@deepseek-ai/dsh-api-session-controller/client` (ISessions) and `@deepseek-ai/dsh-client-ui-conversation/client` (IConversation/SessionInput/ConversationNode), with the chat view snapshot type pulled through `@deepseek-ai/dsh-client-ui-chat/client`'s declaration merge.
@@ -86,7 +90,7 @@ Paste this prompt into any DSH session and the agent installs it for you:
 
 ```sh
 # Option 1: pinned-tag git dependency (public mirror, recommended; github:lhh010/dsh-input-history also works)
-dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.7'
+dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.8'
 
 # Option 2: local link (development)
 git clone https://github.com/lhh010/dsh-input-history.git
@@ -109,7 +113,7 @@ Config line (`$DSH_HOME/profiles/web/cordis.patch.yml`, hot-reloaded, no restart
 Paste this prompt into any DSH session and the agent installs it for you:
 
 > Install the dsh-input-history plugin (DSH input-history recall plugin (terminal-style Ctrl+Up/Ctrl+Down)):
-> 1. Run `dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.7'` (the first run may fail because pnpm 11 blocks node-pty build scripts)
+> 1. Run `dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.8'` (the first run may fail because pnpm 11 blocks node-pty build scripts)
 > 2. Under `~/.dsh/profiles/web`, run `pnpm approve-builds --all` (approve the build scripts)
 > 3. Re-run the install command from step 1
 > 4. Remind me to hard-refresh the browser (Ctrl/Cmd+Shift+R)
