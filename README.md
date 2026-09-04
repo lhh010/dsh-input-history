@@ -11,7 +11,7 @@ DSH Web 输入历史插件：像终端一样用 **Ctrl+Up / Ctrl+Down** 召回�
 
 ```sh
 # 方式一：git 依赖固定 tag（公开镜像，推荐；也可用 github:lhh010/dsh-input-history）
-dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.8'
+dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.9'
 
 # 方式二：本地 link（开发）
 git clone https://github.com/lhh010/dsh-input-history.git
@@ -34,7 +34,7 @@ dsh plugin --profile web add link:/path/to/dsh-input-history
 把下面这段提示词发给任意一个 DSH 会话，模型会替你完成安装：
 
 > 帮我安装 dsh-input-history 插件（DSH 输入历史召回插件（Ctrl+Up/Ctrl+Down 终端式输入历史）），步骤：
-> 1. 执行 `dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.8'`（首次可能被 pnpm 11 拦截 node-pty 构建脚本而失败）
+> 1. 执行 `dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.9'`（首次可能被 pnpm 11 拦截 node-pty 构建脚本而失败）
 > 2. 在 `~/.dsh/profiles/web` 下执行 `pnpm approve-builds --all`（放行构建脚本）
 > 3. 再执行一次第 1 步的安装命令
 > 4. 完成后提醒我硬刷新浏览器（Ctrl/Cmd+Shift+R）
@@ -68,6 +68,10 @@ dsh plugin --profile web add link:/path/to/dsh-input-history
 - **invariants 源码包迁移（仅影响本地 typecheck）**：最终快照将 `@deepseek-ai/dsh-invariants` 源码包由 `packages/support/invariants` 移至 `packages/runtime-diagnostics/invariants`，devDependencies 路径已同步更新；服务名 `invariants` 与注册协议未变，运行不受影响。
 - **实机 boot 验证**：最终快照（`snapshots/20260812T172954Z-final`）web 启动后 `window.__DSH_BOOT__` 清单包含 `@dsh-external/dsh-input-history`，`/plugins/@dsh-external/dsh-input-history/client.js` 返回 200；npm rc.5 consumer `dsh web` 启动后 boot 清单同样包含本插件。依赖的输入门面 `conversation.input.for(actx).setDraft()` 与 `ConversationSnapshot.nodes` 契约在最终快照与 rc.5 上保持不变（0811 新增的 `views` 与 `InputState.imageIds` 均不影响本插件读取的 nodes/draft 契约）。typecheck、build 与 18 个单测对最终快照基线通过。
 
+### dsh-v0.1.3-alpha.1 兼容要点（v0.1.9）
+
+- **验证**：0.1.3 破坏性变更集中在 host/session 侧（SessionHandle / session format v2），client 插件面零代码差异；npm 未发布，源码宿主实机验证；typecheck/build/单测全绿。本节以上版本（0.1.2-alpha.1~rc.1）同样兼容
+
 ### dsh-v0.1.2-rc.1 兼容要点（v0.1.8）
 
 - **验证**：alpha.5→rc.1 为纯版本号提交（252 文件零代码差异）；实机 rc.1 验证通过，无需代码改动。本节以上版本（alpha.1~alpha.5）同样兼容
@@ -93,7 +97,7 @@ dsh plugin --profile web add link:/path/to/dsh-input-history
 
 ```sh
 # 方式一：git 依赖固定 tag（公开镜像，推荐；也可用 github:lhh010/dsh-input-history）
-dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.8'
+dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.9'
 
 # 方式二：本地 link（开发）
 git clone https://github.com/lhh010/dsh-input-history.git
@@ -116,7 +120,7 @@ dsh plugin --profile web add link:/path/to/dsh-input-history
 把下面这段提示词发给任意一个 DSH 会话，模型会替你完成安装：
 
 > 帮我安装 dsh-input-history 插件（DSH 输入历史召回插件（Ctrl+Up/Ctrl+Down 终端式输入历史）），步骤：
-> 1. 执行 `dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.8'`（首次可能被 pnpm 11 拦截 node-pty 构建脚本而失败）
+> 1. 执行 `dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.9'`（首次可能被 pnpm 11 拦截 node-pty 构建脚本而失败）
 > 2. 在 `~/.dsh/profiles/web` 下执行 `pnpm approve-builds --all`（放行构建脚本）
 > 3. 再执行一次第 1 步的安装命令
 > 4. 完成后提醒我硬刷新浏览器（Ctrl/Cmd+Shift+R）
