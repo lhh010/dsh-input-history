@@ -36,7 +36,7 @@ export const name = 'dsh-input-history'
  * scope-addressed conversation face (input machine writes). All are
  * root-level services provided by the stock web app.
  */
-export const inject = ['sessions', 'uiConversation', 'conversation']
+export const inject = ['sessions', 'uiSession', 'uiConversation', 'conversation']
 
 /**
  * Whether the keydown/input target is inside the conversation composer
@@ -72,21 +72,50 @@ function applyBody(ctx: ClientContext): void {
 
   const sessions: ISessions = ctx.sessions
 
-  const resolve = (): ResolvedSession | null => {
+  /**
+   * dsh 0.1.6-alpha.2: the main session moved to the uiSession service
+   * ({ key: sessionId, ctx: session scope } per the multi-instance
+   * refactor); alpha.1 exposed it as sessions.list 'current'. Both paths
+   * resolve to { sessionId, scope }.
+   */
+  const currentSession = (): { sessionId: string; scope: ClientContext } | null => {
+    if (ctx.uiSession !== undefined) {
+      const snap = (ctx.uiSession as { adapter: { current: { getSnapshot(): { key?: string; ctx?: ClientContext } | undefined } } }).adapter.current.getSnapshot()
+      if (snap !== undefined && snap.key !== undefined && snap.ctx !== undefined) return { sessionId: snap.key, scope: snap.ctx }
+      return null
+    }
     const id = sessions.list.getSnapshot().current
     if (id === undefined) return null
+    const scope = sessions.scope(id)
+    return scope === undefined ? null : { sessionId: id, scope }
+  }
+
+  const resolve = (): ResolvedSession | null => {
+    const current = currentSession()
+    if (current === null) return null
+    const { sessionId: id, scope } = current
     if (id !== lastSessionId) {
       // Session switch: recall must start fresh on the new session.
       browse = IDLE
       lastSessionId = id
     }
-    const actx = sessions.scope(id)
-    if (actx === undefined) return null
-    const conversation = actx.get('conversation') as IConversation | undefined
+    const conversation = scope.get('conversation') as IConversation | undefined
     if (conversation === undefined) return null
-    const chat = ctx.uiConversation.binding(id).snapshot.getSnapshot().views.get('chat')
+    // dsh 0.1.6-alpha.2 hardening: every projection hop is optional — the
+    // multi-instance refactor moved the composer host and reshaped view
+    // registration, so a missing hop degrades to "no history" (with one
+    // console line) instead of a thrown error inside the capture listener.
+    let chat: { readonly legacy: { readonly nodes: readonly ConversationNode[] } } | undefined
+    try {
+      chat = ctx.uiConversation.binding(id as unknown as Parameters<typeof ctx.uiConversation.binding>[0]).snapshot.getSnapshot().views.get('chat')
+    } catch (cause) {
+      console.warn('[dsh-input-history] chat view unavailable:', cause)
+      return null
+    }
     const nodes = chat === undefined ? EMPTY_NODES : chat.legacy.nodes
-    return { input: conversation.input.for(actx), nodes }
+    const input = conversation.input.for?.(scope)
+    if (input === undefined) { console.warn('[dsh-input-history] conversation.input.for unavailable'); return null }
+    return { input, nodes }
   }
 
   const onKeyDown = (e: KeyboardEvent): void => {
