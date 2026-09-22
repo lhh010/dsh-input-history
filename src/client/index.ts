@@ -26,6 +26,7 @@ import type {
 import type {} from '@deepseek-ai/dsh-client-ui-chat/client'
 import { down, extractHistory, IDLE, resync, up, type HistoryBrowse } from './history.ts'
 import { applyWithCompat } from './compat.ts'
+import { startUpdateChip } from './update-chip.ts'
 
 /** Stable Cordis plugin name (matches the manifest id). */
 export const name = 'dsh-input-history'
@@ -176,6 +177,7 @@ function applyBody(ctx: ClientContext): void {
  * @param ctx - client root context.
  */
 export function apply(ctx: ClientContext): void {
+  startUpdateChip()
   applyWithCompat(
     '@dsh-external/dsh-input-history',
     '当前 DSH 客户端 API 与插件不匹配',
