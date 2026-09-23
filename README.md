@@ -11,7 +11,7 @@ DSH Web 输入历史插件：像终端一样用 **Ctrl+Up / Ctrl+Down** 召回�
 
 ```sh
 # 方式一：git 依赖固定 tag（公开镜像，推荐；也可用 github:lhh010/dsh-input-history）
-dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.15'
+dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.16'
 
 # 方式二：本地 link（开发）
 git clone https://github.com/lhh010/dsh-input-history.git
@@ -44,7 +44,7 @@ dsh plugin --profile web add link:/path/to/dsh-input-history
 把下面这段提示词发给任意一个 DSH 会话，模型会替你完成安装：
 
 > 帮我安装 dsh-input-history 插件（DSH 输入历史召回插件（Ctrl+Up/Ctrl+Down 终端式输入历史）），步骤：
-> 1. 执行 `dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.15'`（首次可能被 pnpm 11 拦截 node-pty 构建脚本而失败）
+> 1. 执行 `dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.16'`（首次可能被 pnpm 11 拦截 node-pty 构建脚本而失败）
 > 2. 在 `~/.dsh/profiles/web` 下执行 `pnpm approve-builds --all`（放行构建脚本）
 > 3. 再执行一次第 1 步的安装命令
 > 4. 完成后提醒我硬刷新浏览器（Ctrl/Cmd+Shift+R）
@@ -53,13 +53,18 @@ dsh plugin --profile web add link:/path/to/dsh-input-history
 
 （npm 发版不再发布 `cordis` 名义的 vendored 包），本插件已迁移（peer 声明 `@deepseek-ai/cordis: ^4.0.1-rc.1`，npm rc.5 基线上为 `4.0.1-rc.4`），纯 `npm install` 不再报 ERESOLVE。
 
+### dsh-v0.1.7-alpha.2 兼容要点（v0.1.16）
+
+- **新功能**：新增更新浮标（此前本插件无更新提示机制）——含 DSH 版本门控（宿主端点 + 三态浮标 + 一键更新提示词）
+- **验证**：typecheck/25 单测/构建全绿；实机 0.1.7-alpha.2 验证
+
 ### dsh-v0.1.6-alpha.2 兼容要点（v0.1.15）
 
 适配 dsh 0.1.6-alpha.2 多实例重构：主会话改由 `uiSession.current`（`{ key, ctx }`）解析（alpha.1 的 `sessions.list.current` 字段已移除，此前导致 Ctrl+↑/↓ 静默失效）；chat 视图链路全程可选 + console 诊断。typecheck/18 单测/构建全绿，alpha.2 实机验证恢复。
 
 ### dsh-v0.1.6-alpha.1 兼容要点（v0.1.14）
 
-声明支持 dsh-v0.1.6-alpha.1（npm 已发布，钉版本实机验证；client 插件面零代码差异，typecheck/18 单测全绿，实机加载正常）。安装命令统一更新为 `#v0.1.15`。
+声明支持 dsh-v0.1.6-alpha.1（npm 已发布，钉版本实机验证；client 插件面零代码差异，typecheck/18 单测全绿，实机加载正常）。安装命令统一更新为 `#v0.1.16`。
 
 ### dsh-v0.1.5-rc.2 兼容要点（v0.1.13）
 
@@ -129,7 +134,7 @@ dsh plugin --profile web add link:/path/to/dsh-input-history
 
 ```sh
 # 方式一：git 依赖固定 tag（公开镜像，推荐；也可用 github:lhh010/dsh-input-history）
-dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.15'
+dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.16'
 
 # 方式二：本地 link（开发）
 git clone https://github.com/lhh010/dsh-input-history.git
@@ -152,7 +157,7 @@ dsh plugin --profile web add link:/path/to/dsh-input-history
 把下面这段提示词发给任意一个 DSH 会话，模型会替你完成安装：
 
 > 帮我安装 dsh-input-history 插件（DSH 输入历史召回插件（Ctrl+Up/Ctrl+Down 终端式输入历史）），步骤：
-> 1. 执行 `dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.15'`（首次可能被 pnpm 11 拦截 node-pty 构建脚本而失败）
+> 1. 执行 `dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.16'`（首次可能被 pnpm 11 拦截 node-pty 构建脚本而失败）
 > 2. 在 `~/.dsh/profiles/web` 下执行 `pnpm approve-builds --all`（放行构建脚本）
 > 3. 再执行一次第 1 步的安装命令
 > 4. 完成后提醒我硬刷新浏览器（Ctrl/Cmd+Shift+R）
