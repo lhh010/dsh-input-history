@@ -9,6 +9,9 @@ DSH Web input history plugin: recall and cycle through already-sent messages wit
 > - DSH **0.1.2-alpha.1 / alpha.2 / alpha.3 / alpha.4 / alpha.5 / rc.1**: install the **new** version (the default command below)
 ## Installation (profile mode)
 
+> **Install note (auto-mounts since v0.1.23)**: this package ships its own `cordis.patch.yml` and declares `dsh.bundle.patch` — `dsh plugin --profile web add` registers and mounts the profile layer automatically; the manual `insert` row is only needed for pinned older tags. **GUI caveat**: the Add-plugin dialog accepts registry package names or local directory paths only; `name@github:owner/repo#tag` is pnpm alias syntax (CLI-only) and fails there with `ERR_PNPM_INVALID_PACKAGE_NAME`. Clone and use the local path, or wait for the npm release.
+
+
 ```sh
 # Option 1: pinned-tag git dependency (public mirror, recommended; github:lhh010/dsh-input-history also works)
 dsh plugin --profile web add '@dsh-external/dsh-input-history@github:lhh010/dsh-input-history#v0.1.9'
